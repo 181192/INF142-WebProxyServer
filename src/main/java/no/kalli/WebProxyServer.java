@@ -53,11 +53,11 @@ public class WebProxyServer implements Runnable {
                 // TODO lag URL object, opprett TCP connection, hent HTTP-header
 
                 // Matcher mapper
-            } else if (content.matches("^/[a-zA-ZæøåÆØÅ]*(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
+            } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
 
 
                 // Matcher filer
-            } else if (content.matches("^/[a-zA-ZæøåÆØÅ]*(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
+            } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
                 // TODO er filsti, hent filnavn etc..
 
 
