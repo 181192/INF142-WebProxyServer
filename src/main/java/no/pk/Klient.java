@@ -1,4 +1,4 @@
-package no.kalli;
+package no.pk;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,15 +14,23 @@ public class Klient {
         address = InetAddress.getByName("localhost");
     }
 
-    public void sendMsg(String msg) throws IOException {
+    public void sendMsg(String msg) {
         buf = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-        socket.send(packet);
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String receiveMsg() throws IOException {
+    public String receiveMsg()  {
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-        socket.receive(packet);
+        try {
+            socket.receive(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String received = new String(packet.getData(), 0, packet.getLength());
         return received;
     }

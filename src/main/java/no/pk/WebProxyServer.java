@@ -1,4 +1,4 @@
-package no.kalli;
+package no.pk;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
