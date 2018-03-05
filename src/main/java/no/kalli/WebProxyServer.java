@@ -2,7 +2,6 @@ package no.kalli;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.net.*;
 
@@ -30,8 +29,7 @@ public class WebProxyServer implements Runnable {
         running = true;
 
         while (running) {
-            DatagramPacket packet
-                    = new DatagramPacket(buffer, buffer.length);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             // Mottar pakken fra klienten
             try {
@@ -47,21 +45,11 @@ public class WebProxyServer implements Runnable {
             // TODO 1. Lese innholdet, finn ut om det er filsti eller URL (UrlValidator)
             String content = new String(packet.getData(), 0, packet.getLength());
 
-            if (UrlValidator.getInstance().isValid(content)) {
-                // TODO lag URL object, opprett TCP connection, hent HTTP-header
-                try {
-                    HttpURLConnection httpConnection = (HttpURLConnection) new URL(content).openConnection();
-                    httpConnection.setRequestMethod("GET");
-                    System.out.println(httpConnection.getResponseMessage());
-                    System.out.println(httpConnection.getRequestMethod());
-                    System.out.println(httpConnection.getHeaderField(1)); // Det du vil ha ut.
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (UrlValidator.getInstance().isValid(content))
+                makeUrlConnection(content);
+
                 // Matcher mapper
-            } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
+            else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
 
 
                 // Matcher filer
@@ -78,8 +66,7 @@ public class WebProxyServer implements Runnable {
             // Lager en ny pakke
             // TODO 4. Sende tilbake respons til klienten, enten HTTP header eller filnavn
             packet = new DatagramPacket(buffer, buffer.length, address, port);
-            String received
-                    = new String(packet.getData(), 0, packet.getLength());
+            String received = new String(packet.getData(), 0, packet.getLength());
 
             if (received.equals("end")) {
                 running = false;
@@ -96,5 +83,23 @@ public class WebProxyServer implements Runnable {
 
         // Lukker kommunikasjonen / serveren
         server.close();
+    }
+
+    private void makeUrlConnection(String content) {
+        try {
+            HttpURLConnection httpConnection;httpConnection = (HttpURLConnection) new URL(content).openConnection();
+            httpConnection.setRequestMethod("GET");
+            buffer = httpConnection.getResponseMessage().getBytes();
+            System.out.println(httpConnection.getResponseMessage());
+            System.out.println(httpConnection.getRequestMethod());
+            System.out.println(httpConnection.getHeaderField(1)); // Det du vil ha ut.
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
