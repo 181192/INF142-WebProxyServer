@@ -2,11 +2,9 @@ package no.kalli;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class WebProxyServer implements Runnable {
     private DatagramSocket server;
@@ -51,7 +49,17 @@ public class WebProxyServer implements Runnable {
 
             if (UrlValidator.getInstance().isValid(content)) {
                 // TODO lag URL object, opprett TCP connection, hent HTTP-header
-
+                try {
+                    HttpURLConnection httpConnection = (HttpURLConnection) new URL(content).openConnection();
+                    httpConnection.setRequestMethod("GET");
+                    System.out.println(httpConnection.getResponseMessage());
+                    System.out.println(httpConnection.getRequestMethod());
+                    System.out.println(httpConnection.getHeaderField(1)); // Det du vil ha ut.
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 // Matcher mapper
             } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
 
