@@ -18,7 +18,8 @@ public class WebProxyServer implements Runnable {
 
     public WebProxyServer() {
         try {
-            this.server = new DatagramSocket(4545);
+            server = new DatagramSocket(4445);
+            buffer = new byte[1024];
         } catch (SocketException e) {
             e.printStackTrace();
         }
