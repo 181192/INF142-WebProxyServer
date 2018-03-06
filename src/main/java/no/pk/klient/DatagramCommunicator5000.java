@@ -24,7 +24,7 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent
     public DatagramCommunicator5000(int port) throws SocketException, UnknownHostException {
         this.port = port;
         socket = new DatagramSocket();
-        address = InetAddress.getByName("localhost");
+        address = InetAddress.getByName("192.168.8.4");
         ShutdownThread fShutdownThread = new ShutdownThread(this);
         Runtime.getRuntime().addShutdownHook(fShutdownThread);
         buf = new byte[1024];

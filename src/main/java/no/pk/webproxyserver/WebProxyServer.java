@@ -1,9 +1,6 @@
 package no.pk.webproxyserver;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class WebProxyServer implements Runnable {
     private DatagramSocket server;
@@ -13,7 +10,9 @@ public class WebProxyServer implements Runnable {
     public WebProxyServer(int port) {
         this.port = port;
         try {
-            server = new DatagramSocket(port);
+            server = new DatagramSocket(null);
+            InetSocketAddress address = new InetSocketAddress("192.168.8.4", port);
+            server.bind(address);
             util = WebProxyUtil.getInstance();
         } catch (SocketException e) {
             e.printStackTrace();
