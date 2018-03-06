@@ -2,15 +2,21 @@ package no.pk.webproxyserver;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WebProxyUtil {
     private static WebProxyUtil instance;
@@ -52,7 +58,7 @@ public class WebProxyUtil {
 
             httpConnection.setRequestMethod("GET");
 
-            for(Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()){
+            for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
                 System.out.println(field.getValue());
             }
 
@@ -77,7 +83,7 @@ public class WebProxyUtil {
         }
         // Matcher mapper
         else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
-            msg = getDirectories(content);
+            msg = getFile(content);
 
             // Matcher filer
         } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
@@ -92,31 +98,38 @@ public class WebProxyUtil {
     }
 
     private byte[] getFilesInDirectory(String path) {
-
-        StringBuilder sb = new StringBuilder();
-
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutputStream os;
         try {
-            Files.walk(Paths.get(path))
+            List<File> files = Files.walk(Paths.get(path))
                     .filter(Files::isRegularFile)
-                    .forEach(file -> sb.append(file.toString()).append(", \n"));
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+
+            os = new ObjectOutputStream(outputStream);
+            os.writeObject(files);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return sb.toString().getBytes();
+        return outputStream.toByteArray();
     }
 
-    private byte[] getDirectories(String path) {
-        StringBuilder sb = new StringBuilder();
+    private byte[] getFile(String path) {
+        Path file = Paths.get(path);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutputStream os;
 
         try {
-            Files.walk(Paths.get(path))
-                    .filter(Files::isDirectory)
-                    .forEach(file -> sb.append(file.toString()).append(", \n"));
+            os = new ObjectOutputStream(outputStream);
+            BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+            os.writeObject(attr);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return sb.toString().getBytes();
+        return outputStream.toByteArray();
     }
 }

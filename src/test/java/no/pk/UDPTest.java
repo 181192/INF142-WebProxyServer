@@ -45,6 +45,13 @@ public class UDPTest {
         System.out.println(status);
     }
 
+    @Test
+    public void listFilesInHomeDirecotry(){
+        String url = client.sendMsg("/home/k/Pictures");
+        assertEquals("OK", url);
+
+    }
+
     @AfterEach
     public void tearDown() {
         client.sendMsg("end");
