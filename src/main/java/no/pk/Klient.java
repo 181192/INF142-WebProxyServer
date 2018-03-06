@@ -10,30 +10,25 @@ public class Klient {
     private byte[] buf;
 
     public Klient() throws SocketException, UnknownHostException {
+
         socket = new DatagramSocket();
-        address = InetAddress.getByName("127.0.0.1");
+        address = InetAddress.getByName("localhost");
     }
 
-    public void sendMsg(String msg) {
+    public String sendMsg(String msg) {
+
         buf = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
         try {
             socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String receiveMsg()  {
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-        try {
+            packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String received = new String(packet.getData(), 0, packet.getLength());
-        return received;
+        return new String(packet.getData(), 0, packet.getLength());
     }
+
 
     public void close() {
         socket.close();
