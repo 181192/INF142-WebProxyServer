@@ -1,5 +1,6 @@
 package no.pk.webproxyserver;
 
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.io.ByteArrayOutputStream;
@@ -55,16 +56,18 @@ public class WebProxyUtil {
             HttpURLConnection httpConnection;
 
             httpConnection = (HttpURLConnection) new URL(content).openConnection();
-
             httpConnection.setRequestMethod("GET");
 
-            if(httpConnection.getHeaderFields() != null){
+            if(DomainValidator.getInstance().isValid(content)){
                 for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
                     if(field != null)
                         System.out.println(field.getValue());
                 }
                 melding = httpConnection.getResponseMessage().getBytes();
+            }else {
+                melding = "Not Valid Domain Name".getBytes();
             }
+
 
 /*
             System.out.println("Response Message " + httpConnection.getResponseMessage());
