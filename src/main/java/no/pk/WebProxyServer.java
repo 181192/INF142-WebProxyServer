@@ -58,7 +58,8 @@ public class WebProxyServer implements Runnable {
 
                 // Matcher mapper
             else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
-
+                byte[] files = getDirectories(content).getBytes();
+                packet = new DatagramPacket(files, files.length, address, port);
 
                 // Matcher filer
             } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
@@ -120,8 +121,21 @@ public class WebProxyServer implements Runnable {
         try {
             Files.walk(Paths.get(path))
                     .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .collect(Collectors.toList()).forEach(file -> sb.append(file.toString()).append(", \n"));
+                    .forEach(file -> sb.append(file.toString()).append(", \n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
+    }
+
+    private String getDirectories(String path) {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            Files.walk(Paths.get(path))
+                    .filter(Files::isDirectory)
+                    .forEach(file -> sb.append(file.toString()).append(", \n"));
         } catch (IOException e) {
             e.printStackTrace();
         }
