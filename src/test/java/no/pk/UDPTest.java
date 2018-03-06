@@ -21,13 +21,6 @@ public class UDPTest {
     }
 
     @Test
-    public void whenCanSendAndReceivePacket_thenCorrect() {
-        String echo = client.sendMsg("hello server");
-        assertEquals("hello server", echo);
-        echo = client.sendMsg("server is working");
-        assertFalse(echo.equals("hello server"));
-    }
-    @Test
     public void httpMakeConnection(){
         String url = client.sendMsg("https://www.google.no/");
         assertEquals("OK", url);

@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 public class WebProxyUtil {
     private static WebProxyUtil instance;
@@ -49,12 +51,16 @@ public class WebProxyUtil {
 
             httpConnection.setRequestMethod("GET");
 
-            melding = httpConnection.getResponseMessage().getBytes();
+            for(Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()){
+                System.out.println(field.getValue());
+            }
 
+            melding = httpConnection.getResponseMessage().getBytes();
+/*
             System.out.println("Response Message " + httpConnection.getResponseMessage());
             System.out.println("Response Code " + httpConnection.getResponseCode());
             System.out.println("Request Method " + httpConnection.getRequestMethod());
-            System.out.println("Date "+ httpConnection.getHeaderField(1)); // Det du vil ha ut.
+            System.out.println("Date "+ httpConnection.getHeaderField(1)); // Det du vil ha ut.*/
         } catch (IOException e) {
             e.printStackTrace();
         }
