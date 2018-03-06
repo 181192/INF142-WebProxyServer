@@ -37,64 +37,51 @@ public class WebProxyServer implements Runnable {
         running = true;
 
         while (running) {
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-            // Mottar pakken fra klienten
-            try {
-                server.receive(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DatagramPacket packet = receivePacket();
 
             // Henter ut ip-adressen og port
             InetAddress address = packet.getAddress();
             int port = packet.getPort();
 
-            // TODO 1. Lese innholdet, finn ut om det er filsti eller URL (UrlValidator)
             String content = new String(packet.getData(), 0, packet.getLength());
+            byte[] msg = validateInput(content);
 
-            if (UrlValidator.getInstance().isValid(content)) {
-                byte[] files = makeUrlConnection(content);
-                packet = new DatagramPacket(files, files.length, address, port);
-            }
-
-                // Matcher mapper
-            else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
-                byte[] files = getDirectories(content);
-                packet = new DatagramPacket(files, files.length, address, port);
-
-                // Matcher filer
-            } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
-                // TODO er filsti, hent filnavn etc..
-                byte[] files = getFilesInDirectory(content);
-                packet = new DatagramPacket(files, files.length, address, port);
-
-            } else {
-                // TODO Strengen er crap
-                byte[] feil = "ayy, fuck".getBytes();
-                packet = new DatagramPacket(feil, feil.length, address, port);
-            }
-
+            packet = new DatagramPacket(msg, msg.length, address, port);
 
             // Lager en ny pakke
             String received = new String(packet.getData(), 0, packet.getLength());
 
+            sendPacket(packet);
+
             if (received.equals("end")) {
                 running = false;
-                continue;
-            }
-
-            // Sender pakken til klienten
-            try {
-                server.send(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
         // Lukker kommunikasjonen / serveren
         server.close();
     }
+
+    private DatagramPacket receivePacket() {
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        // Mottar pakken fra klienten
+        try {
+            server.receive(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return packet;
+    }
+
+    private void sendPacket(DatagramPacket packet) {
+        try {
+            server.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private byte[] makeUrlConnection(String content) {
         byte[] melding = null;
@@ -116,6 +103,28 @@ public class WebProxyServer implements Runnable {
         }
         return melding;
 
+    }
+
+    private byte[] validateInput(String content) {
+        byte[] msg = null;
+
+        if (UrlValidator.getInstance().isValid(content)) {
+            msg = makeUrlConnection(content);
+        }
+        // Matcher mapper
+        else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
+            msg = getDirectories(content);
+
+            // Matcher filer
+        } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
+            msg = getFilesInDirectory(content);
+
+        } else {
+            // TODO Strengen er crap
+            msg = "ayy, fuck".getBytes();
+        }
+
+        return msg;
     }
 
     private byte[] getFilesInDirectory(String path) {
