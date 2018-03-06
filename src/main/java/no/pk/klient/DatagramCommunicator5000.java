@@ -1,14 +1,10 @@
 package no.pk.klient;
 
-import no.pk.klient.shutdown.IShutdownThreadParent;
-import no.pk.klient.shutdown.ShutdownThread;
+import no.pk.shutdown.IShutdownThreadParent;
+import no.pk.shutdown.ShutdownThread;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Scanner;
 
 public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent {
@@ -54,7 +50,6 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent
     }
 
     public void sendMsg(String msg) {
-        buf = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
         try {
             socket.send(packet);

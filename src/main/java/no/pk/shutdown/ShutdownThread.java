@@ -1,4 +1,4 @@
-package no.pk.klient.shutdown;
+package no.pk.shutdown;
 
 public class ShutdownThread extends Thread{
     private IShutdownThreadParent mShutdownThreadParent;
