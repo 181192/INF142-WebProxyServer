@@ -69,13 +69,12 @@ public class WebProxyServer implements Runnable {
 
             } else {
                 // TODO Strengen er crap
-
+                byte[] feil = "ayy, fuck".getBytes();
+                packet = new DatagramPacket(feil, feil.length, address, port);
             }
 
 
             // Lager en ny pakke
-            // TODO 4. Sende tilbake respons til klienten, enten HTTP header eller filnavn
-            packet = new DatagramPacket(buffer, buffer.length, address, port);
             String received = new String(packet.getData(), 0, packet.getLength());
 
             if (received.equals("end")) {
