@@ -35,6 +35,7 @@ public class WebProxyUtil {
 
     void sendPacket(DatagramSocket server, DatagramPacket packet) {
         try {
+
             server.send(packet);
         } catch (IOException e) {
             e.printStackTrace();

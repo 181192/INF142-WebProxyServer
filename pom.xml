@@ -7,6 +7,28 @@
     <groupId>KalliOgPeder</groupId>
     <artifactId>WPS</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+
+    <developers>
+        <developer>
+            <id>181221</id>
+            <name>Peder Wiig</name>
+            <email>peder.wiig@gmail.com</email>
+            <organization>Aalen IT</organization>
+            <organizationUrl>https://pederyo.no</organizationUrl>
+        </developer>
+
+        <developer>
+            <id>181192</id>
+            <name>Kristoffer Kalliainen</name>
+            <email>181192@stud.hvl.no</email>
+            <organization>Kalli IT</organization>
+            <organizationUrl>https://kalli.no</organizationUrl>
+        </developer>
+    </developers>
+
+
+
     <build>
         <plugins>
             <plugin>
@@ -16,6 +38,53 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>no.pk.klient.Main</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -36,5 +105,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 
 </project>

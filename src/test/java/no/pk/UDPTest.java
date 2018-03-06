@@ -1,5 +1,6 @@
 package no.pk;
 
+import no.pk.klient.DatagramCommunicator5000;
 import no.pk.webproxyserver.WebProxyServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +48,6 @@ public class UDPTest {
     @AfterEach
     public void tearDown() {
         client.sendMsg("end");
-        client.close();
+        client.shutdown();
     }
 }

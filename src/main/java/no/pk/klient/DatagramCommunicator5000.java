@@ -1,18 +1,36 @@
-package no.pk;
+package no.pk.klient;
+
+import no.pk.klient.shutdown.IShutdownThreadParent;
+import no.pk.klient.shutdown.ShutdownThread;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Scanner;
 
-public class DatagramCommunicator5000 {
+public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent {
+
     private DatagramSocket socket;
     private InetAddress address;
+    private ShutdownThread fShutdownThread;
+    static volatile boolean keepRunning = true;
 
     private byte[] buf;
 
     public DatagramCommunicator5000() throws SocketException, UnknownHostException {
-
         socket = new DatagramSocket();
         address = InetAddress.getByName("localhost");
+        fShutdownThread = new ShutdownThread(this);
+        Runtime.getRuntime().addShutdownHook(fShutdownThread);
+    }
+
+    @Override
+    public void run() {
+        while(keepRunning){
+            Scanner sc = new Scanner(System.in);
+            System.out.println("waiting for input from user...");
+            String meld = sc.nextLine();
+        }
+
     }
 
     public String sendMsg(String msg) {
@@ -30,8 +48,10 @@ public class DatagramCommunicator5000 {
     }
 
 
-    public void close() {
+    @Override
+    public void shutdown() {
+        System.out.println("shutting down socket...");
+        keepRunning = false;
         socket.close();
     }
-
 }
