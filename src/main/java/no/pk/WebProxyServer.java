@@ -2,8 +2,15 @@ package no.pk;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
+import javax.print.DocFlavor;
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WebProxyServer implements Runnable {
     private DatagramSocket server;
@@ -56,7 +63,8 @@ public class WebProxyServer implements Runnable {
                 // Matcher filer
             } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
                 // TODO er filsti, hent filnavn etc..
-
+                byte[] files = getFilesInDirectory(content).getBytes();
+                packet = new DatagramPacket(files, files.length, address, port);
 
             } else {
                 // TODO Strengen er crap
@@ -88,7 +96,8 @@ public class WebProxyServer implements Runnable {
 
     private void makeUrlConnection(String content) {
         try {
-            HttpURLConnection httpConnection;httpConnection = (HttpURLConnection) new URL(content).openConnection();
+            HttpURLConnection httpConnection;
+            httpConnection = (HttpURLConnection) new URL(content).openConnection();
             httpConnection.setRequestMethod("GET");
             buffer = httpConnection.getResponseMessage().getBytes();
             System.out.println(httpConnection.getResponseMessage());
@@ -102,5 +111,21 @@ public class WebProxyServer implements Runnable {
             e.printStackTrace();
         }
 
+    }
+
+    private String getFilesInDirectory(String path) {
+
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            Files.walk(Paths.get(path))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList()).forEach(file -> sb.append(file.toString()).append(", \n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 }
