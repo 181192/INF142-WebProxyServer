@@ -6,11 +6,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
+import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class UDPTest {
     DatagramCommunicator5000 client;
@@ -27,6 +29,11 @@ public class UDPTest {
         String url = client.sendMsg("https://www.google.no/");
         assertEquals("OK", url);
 
+    }
+    @Test
+    public void HentFilObject() {
+        client.sendMsg("/home/pederyo/index.html");
+        client.hentFil();
     }
 
     @Test

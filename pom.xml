@@ -15,7 +15,7 @@
             <name>Peder Wiig</name>
             <email>peder.wiig@gmail.com</email>
             <organization>Aalen IT</organization>
-            <organizationUrl>https://pederyo.no</organizationUrl>
+            <organizationUrl>https://Aalen-it.no</organizationUrl>
         </developer>
 
         <developer>
@@ -39,6 +39,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -50,6 +51,7 @@
                     </archive>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -72,6 +74,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -86,6 +89,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
