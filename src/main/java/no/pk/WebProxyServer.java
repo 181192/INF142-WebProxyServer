@@ -53,8 +53,10 @@ public class WebProxyServer implements Runnable {
             // TODO 1. Lese innholdet, finn ut om det er filsti eller URL (UrlValidator)
             String content = new String(packet.getData(), 0, packet.getLength());
 
-            if (UrlValidator.getInstance().isValid(content))
-                makeUrlConnection(content);
+            if (UrlValidator.getInstance().isValid(content)) {
+                byte[] files = makeUrlConnection(content);
+                packet = new DatagramPacket(files, files.length, address, port);
+            }
 
                 // Matcher mapper
             else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
@@ -94,22 +96,25 @@ public class WebProxyServer implements Runnable {
         server.close();
     }
 
-    private void makeUrlConnection(String content) {
+    private byte[] makeUrlConnection(String content) {
+        byte[] melding = null;
         try {
             HttpURLConnection httpConnection;
+
             httpConnection = (HttpURLConnection) new URL(content).openConnection();
+
             httpConnection.setRequestMethod("GET");
-            buffer = httpConnection.getResponseMessage().getBytes();
-            System.out.println(httpConnection.getResponseMessage());
-            System.out.println(httpConnection.getRequestMethod());
-            System.out.println(httpConnection.getHeaderField(1)); // Det du vil ha ut.
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+
+            melding = httpConnection.getResponseMessage().getBytes();
+
+            System.out.println("Response Message " + httpConnection.getResponseMessage());
+            System.out.println("Response Code " + httpConnection.getResponseCode());
+            System.out.println("Request Method " + httpConnection.getRequestMethod());
+            System.out.println("Date "+ httpConnection.getHeaderField(1)); // Det du vil ha ut.
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return melding;
 
     }
 
