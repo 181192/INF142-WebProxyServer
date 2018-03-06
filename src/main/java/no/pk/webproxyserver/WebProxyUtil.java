@@ -58,12 +58,14 @@ public class WebProxyUtil {
 
             httpConnection.setRequestMethod("GET");
 
-            for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
-                if(field != null)
-                    System.out.println(field.getValue());
+            if(httpConnection.getHeaderFields() != null){
+                for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
+                    if(field != null)
+                        System.out.println(field.getValue());
+                }
+                melding = httpConnection.getResponseMessage().getBytes();
             }
 
-            melding = httpConnection.getResponseMessage().getBytes();
 /*
             System.out.println("Response Message " + httpConnection.getResponseMessage());
             System.out.println("Response Code " + httpConnection.getResponseCode());
