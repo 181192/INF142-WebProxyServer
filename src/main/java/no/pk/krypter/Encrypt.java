@@ -1,4 +1,4 @@
-package no.pk;
+package no.pk.krypter;
 
 public class Encrypt {
 }

@@ -1,4 +1,4 @@
-package no.pk;
+package no.pk.webproxyserver;
 
 import org.apache.commons.validator.routines.UrlValidator;
 

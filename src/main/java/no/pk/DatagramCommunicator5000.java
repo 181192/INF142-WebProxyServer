@@ -3,13 +3,13 @@ package no.pk;
 import java.io.IOException;
 import java.net.*;
 
-public class Klient {
+public class DatagramCommunicator5000 {
     private DatagramSocket socket;
     private InetAddress address;
 
     private byte[] buf;
 
-    public Klient() throws SocketException, UnknownHostException {
+    public DatagramCommunicator5000() throws SocketException, UnknownHostException {
 
         socket = new DatagramSocket();
         address = InetAddress.getByName("localhost");

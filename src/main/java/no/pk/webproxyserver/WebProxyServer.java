@@ -1,4 +1,4 @@
-package no.pk;
+package no.pk.webproxyserver;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,7 +9,7 @@ public class WebProxyServer implements Runnable {
     private DatagramSocket server;
     private WebProxyUtil util;
 
-    WebProxyServer() {
+    public WebProxyServer() {
         try {
             server = new DatagramSocket(4445);
             util = WebProxyUtil.getInstance();
