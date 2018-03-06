@@ -59,7 +59,8 @@ public class WebProxyUtil {
             httpConnection.setRequestMethod("GET");
 
             for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
-                System.out.println(field.getValue());
+                if(field != null)
+                    System.out.println(field.getValue());
             }
 
             melding = httpConnection.getResponseMessage().getBytes();
