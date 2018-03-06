@@ -1,29 +1,25 @@
 package no.pk.klient;
 
-import no.pk.shutdown.IShutdownThreadParent;
+import no.pk.shutdown.IShutdownThread;
 import no.pk.shutdown.ShutdownThread;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
 
-public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent {
+public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
 
     private DatagramSocket socket;
     private InetAddress address;
     private int port;
     private static volatile boolean keepRunning = true;
 
-
-    private byte[] buf;
-
-    public DatagramCommunicator5000(int port) throws SocketException, UnknownHostException {
+    public DatagramCommunicator5000(String address, int port) throws SocketException, UnknownHostException {
         this.port = port;
         socket = new DatagramSocket();
-        address = InetAddress.getByName("192.168.8.4");
+        this.address = InetAddress.getByName(address);
         ShutdownThread fShutdownThread = new ShutdownThread(this);
         Runtime.getRuntime().addShutdownHook(fShutdownThread);
-        buf = new byte[1024];
     }
 
     @Override
@@ -33,14 +29,15 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent
             System.out.println("waiting for input from user...");
             String msg = sc.nextLine();
             sendMsg(msg);
-            String recieve = getMsg();
-            System.out.println(recieve);
+            String receive = getMsg();
+            System.out.println(receive);
         }
 
     }
 
     public String getMsg() {
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        byte[] tmp = new byte[1024];
+        DatagramPacket packet = new DatagramPacket(tmp, tmp.length);
         try {
             socket.receive(packet);
         } catch (IOException e) {
@@ -50,7 +47,8 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent
     }
 
     public void sendMsg(String msg) {
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+        byte[] tmp = msg.getBytes();
+        DatagramPacket packet = new DatagramPacket(tmp, tmp.length, address, port);
         try {
             socket.send(packet);
         } catch (IOException e) {

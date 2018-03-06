@@ -14,26 +14,28 @@ import java.net.UnknownHostException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UDPTest {
-    DatagramCommunicator5000 client;
-    int port = 4545;
+class UDPTest {
+    private DatagramCommunicator5000 client;
 
     @BeforeEach
-    public void setup() throws SocketException, UnknownHostException {
-        Thread r1 = new Thread(new WebProxyServer(port));
+    void setup() throws SocketException, UnknownHostException {
+        int port = 4545;
+        String address = "192.168.8.4";
+
+        Thread r1 = new Thread(new WebProxyServer(address, port));
         r1.start();
-        client = new DatagramCommunicator5000(port);
+        client = new DatagramCommunicator5000(address, port);
     }
 
     @Test
-    public void httpMakeConnection(){
+    void httpMakeConnection(){
         client.sendMsg("https://www.google.no/");
         String msg = client.getMsg();
-        assertEquals("OK", msg);
+        assertEquals("OK 200", msg);
 
     }
     @Test
-    public void HentFilObject() {
+    void HentFilObject() {
         String path = "/home/k/index.html";
         String filename = "index.html";
         client.sendMsg(path);
@@ -43,8 +45,7 @@ public class UDPTest {
     }
 
     @AfterEach
-    public void tearDown() {
-        client.sendMsg("end");
+    void tearDown() {
         client.shutdown();
     }
 }

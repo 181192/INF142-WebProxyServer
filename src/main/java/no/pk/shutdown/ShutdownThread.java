@@ -1,9 +1,9 @@
 package no.pk.shutdown;
 
 public class ShutdownThread extends Thread{
-    private IShutdownThreadParent mShutdownThreadParent;
+    private IShutdownThread mShutdownThreadParent;
 
-    public ShutdownThread(IShutdownThreadParent mShutdownThreadParent) {
+    public ShutdownThread(IShutdownThread mShutdownThreadParent) {
         this.mShutdownThreadParent = mShutdownThreadParent;
     }
 

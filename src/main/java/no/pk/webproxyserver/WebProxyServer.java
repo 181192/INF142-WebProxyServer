@@ -1,18 +1,21 @@
 package no.pk.webproxyserver;
 
+import no.pk.shutdown.IShutdownThread;
+
 import java.net.*;
 
-public class WebProxyServer implements Runnable {
+public class WebProxyServer implements Runnable, IShutdownThread {
     private DatagramSocket server;
     private WebProxyUtil util;
     private int port;
+    private static volatile boolean keepRunning = true;
 
-    public WebProxyServer(int port) {
+    public WebProxyServer(String address, int port) {
         this.port = port;
         try {
             server = new DatagramSocket(null);
-            InetSocketAddress address = new InetSocketAddress("192.168.8.4", port);
-            server.bind(address);
+            InetSocketAddress sa = new InetSocketAddress(address, port);
+            server.bind(sa);
             util = WebProxyUtil.getInstance();
         } catch (SocketException e) {
             e.printStackTrace();
@@ -21,13 +24,10 @@ public class WebProxyServer implements Runnable {
 
     @Override
     public void run() {
-        boolean running = true;
-
-        while (running) {
+        while (keepRunning) {
 
             DatagramPacket packet = util.receivePacket(server);
 
-            // Henter ut ip-adressen og port
             InetAddress address = packet.getAddress();
             int port = packet.getPort();
 
@@ -37,12 +37,8 @@ public class WebProxyServer implements Runnable {
 
             packet = new DatagramPacket(msg, msg.length, address, port);
 
-            if (content.equals("end")) running = false;
-
             util.sendPacket(server, packet);
         }
-
-        server.close();
     }
 
     public int getPort() {
@@ -51,5 +47,16 @@ public class WebProxyServer implements Runnable {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    @Override
+    public void shutdown() {
+        keepRunning = false;
+        try {
+            server.bind(null);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        server.close();
     }
 }
