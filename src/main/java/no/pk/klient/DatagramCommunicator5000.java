@@ -9,77 +9,58 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Scanner;
 
 public class DatagramCommunicator5000 implements Runnable, IShutdownThreadParent {
 
     private DatagramSocket socket;
     private InetAddress address;
-    private ShutdownThread fShutdownThread;
-    static volatile boolean keepRunning = true;
+    private int port;
+    private static volatile boolean keepRunning = true;
 
 
     private byte[] buf;
 
-    public DatagramCommunicator5000() throws SocketException, UnknownHostException {
+    public DatagramCommunicator5000(int port) throws SocketException, UnknownHostException {
+        this.port = port;
         socket = new DatagramSocket();
         address = InetAddress.getByName("localhost");
-        fShutdownThread = new ShutdownThread(this);
+        ShutdownThread fShutdownThread = new ShutdownThread(this);
         Runtime.getRuntime().addShutdownHook(fShutdownThread);
         buf = new byte[1024];
     }
 
     @Override
     public void run() {
-        while(keepRunning){
-            sendMsg("/home/pederyo/index.html");
-           /* Scanner sc = new Scanner(System.in);
+        while (keepRunning) {
+            Scanner sc = new Scanner(System.in);
             System.out.println("waiting for input from user...");
-            String meld = sc.nextLine();
-            String recieve = sendMsg(meld);
-            System.out.println(recieve);*/
+            String msg = sc.nextLine();
+            sendMsg(msg);
+            String recieve = getMsg();
+            System.out.println(recieve);
         }
 
     }
-        public BasicFileAttributes hentFil() {
-        DatagramPacket packet;
-        BasicFileAttributes attr = null;
 
+    public String getMsg() {
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
         try {
-            packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
-            byte[] data = packet.getData();
-            ByteArrayInputStream in = new ByteArrayInputStream(data);
-            ObjectInputStream is = new ObjectInputStream(in);
-            attr = (BasicFileAttributes) is.readObject();
-            System.out.println("printer fil: " + attr.toString());
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
-        return attr;
+        return new String(packet.getData(), 0, packet.getLength());
     }
 
-    public String sendMsg(String msg) {
-
+    public void sendMsg(String msg) {
         buf = msg.getBytes();
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4545);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
         try {
             socket.send(packet);
-            packet = new DatagramPacket(buf, buf.length);
-           /* socket.receive(packet);
-            byte[] data = packet.getData();
-            ByteArrayInputStream in = new ByteArrayInputStream(data);
-            ObjectInputStream is = new ObjectInputStream(in);
-
-            BasicFileAttributes attr = (BasicFileAttributes) is.readObject();
-            System.out.println("printer fil: " + attr.toString());*/
         } catch (IOException e) {
             e.printStackTrace();
-        } //catch (ClassNotFoundException e) {
-           // e.printStackTrace();
-        //}
-        return new String(packet.getData(), 0, packet.getLength());
+        }
     }
 
 

@@ -16,46 +16,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UDPTest {
     DatagramCommunicator5000 client;
+    int port = 4545;
 
     @BeforeEach
     public void setup() throws SocketException, UnknownHostException {
-        Thread r1 = new Thread(new WebProxyServer(4545));
+        Thread r1 = new Thread(new WebProxyServer(port));
         r1.start();
-        client = new DatagramCommunicator5000();
+        client = new DatagramCommunicator5000(port);
     }
 
     @Test
     public void httpMakeConnection(){
-        String url = client.sendMsg("https://www.google.no/");
-        assertEquals("OK", url);
+        client.sendMsg("https://www.google.no/");
+        String msg = client.getMsg();
+        assertEquals("OK", msg);
 
     }
     @Test
     public void HentFilObject() {
-        client.sendMsg("/home/pederyo/index.html");
-        client.hentFil();
-    }
-
-    @Test
-    public void hentFil() {
-        String filnavn = "/home/pederyo/index.html";
-        String status = client.sendMsg(filnavn);
-        assertEquals(status, filnavn);
-        filnavn = "/home/pederyo/inftest/hei";
-        status = client.sendMsg(filnavn);
-        assertEquals(filnavn, status);
-    }
-    @Test
-    public void hentFilerIMappe(){
-        String filnavn = "/home/pederyo/inftest/";
-        String status = client.sendMsg(filnavn);
-        System.out.println(status);
-    }
-
-    @Test
-    public void listFilesInHomeDirecotry(){
-        String url = client.sendMsg("/home/k/Pictures");
-        assertEquals("OK", url);
+        String path = "/home/k/index.html";
+        String filename = "index.html";
+        client.sendMsg(path);
+        String msg = client.getMsg();
+        assertEquals(filename, msg);
 
     }
 

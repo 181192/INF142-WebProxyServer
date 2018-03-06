@@ -114,15 +114,13 @@ public class WebProxyUtil {
 
     private byte[] getFile(String path) {
         StringBuilder sb = new StringBuilder();
-
+        Path file = Paths.get(path);
         try {
-            Files.walk(Paths.get(path))
-                    .filter(Files::isDirectory)
-                    .forEach(file -> sb.append(file.toString()).append(", \n"));
+            BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+            sb.append(file.getFileName());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return sb.toString().getBytes();
     }
 }
