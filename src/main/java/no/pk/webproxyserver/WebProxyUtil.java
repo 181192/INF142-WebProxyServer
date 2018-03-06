@@ -62,17 +62,11 @@ public class WebProxyUtil {
                     if(field != null)
                         System.out.println(field.getValue());
                 }
-                melding = httpConnection.getResponseMessage().getBytes();
+                melding = (httpConnection.getResponseMessage() + " " + httpConnection.getResponseCode()).getBytes();
             }else {
                 melding = "Not Valid Domain Name".getBytes();
             }
 
-
-/*
-            System.out.println("Response Message " + httpConnection.getResponseMessage());
-            System.out.println("Response Code " + httpConnection.getResponseCode());
-            System.out.println("Request Method " + httpConnection.getRequestMethod());
-            System.out.println("Date "+ httpConnection.getHeaderField(1)); // Det du vil ha ut.*/
         } catch (IOException e) {
             e.printStackTrace();
         }
