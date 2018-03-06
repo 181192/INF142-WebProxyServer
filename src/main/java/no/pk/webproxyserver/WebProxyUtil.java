@@ -58,7 +58,7 @@ public class WebProxyUtil {
             httpConnection = (HttpURLConnection) new URL(content).openConnection();
             httpConnection.setRequestMethod("GET");
 
-            if(DomainValidator.getInstance().isValid(content)){
+            if(httpConnection.getHeaderFields() != null){
                 for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
                     if(field != null)
                         System.out.println(field.getValue());
