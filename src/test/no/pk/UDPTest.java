@@ -27,6 +27,12 @@ public class UDPTest {
         echo = client.sendMsg("server is working");
         assertFalse(echo.equals("hello server"));
     }
+    @Test
+    public void httpMakeConnection(){
+        String url = client.sendMsg("https://www.google.no/");
+        assertEquals("OK", url);
+
+    }
 
     @AfterEach
     public void tearDown() {
