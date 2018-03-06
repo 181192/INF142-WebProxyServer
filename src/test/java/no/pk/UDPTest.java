@@ -15,18 +15,17 @@ public class UDPTest {
 
     @BeforeEach
     public void setup() throws SocketException, UnknownHostException {
-        new WebProxyServer().run();
+        Thread r1 = new Thread(new WebProxyServer());
+        r1.start();
         client = new Klient();
     }
 
     @Test
     public void whenCanSendAndReceivePacket_thenCorrect() {
-        client.sendMsg("hello server");
-        String meld = client.receiveMsg();
-        assertEquals("hello server", meld);
-        client.sendMsg("server is working");
-        meld = client.receiveMsg();
-        assertFalse(meld.equals("hello server"));
+        String echo = client.sendMsg("hello server");
+        assertEquals("hello server", echo);
+        echo = client.sendMsg("server is working");
+        assertFalse(echo.equals("hello server"));
     }
 
     @AfterEach
