@@ -17,7 +17,7 @@ public class UDPTest {
 
     @BeforeEach
     public void setup() throws SocketException, UnknownHostException {
-        Thread r1 = new Thread(new WebProxyServer());
+        Thread r1 = new Thread(new WebProxyServer(4545));
         r1.start();
         client = new DatagramCommunicator5000();
     }

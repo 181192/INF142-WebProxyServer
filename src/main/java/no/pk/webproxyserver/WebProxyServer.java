@@ -8,10 +8,12 @@ import java.net.SocketException;
 public class WebProxyServer implements Runnable {
     private DatagramSocket server;
     private WebProxyUtil util;
+    private int port;
 
-    public WebProxyServer() {
+    public WebProxyServer(int port) {
+        this.port = port;
         try {
-            server = new DatagramSocket(4445);
+            server = new DatagramSocket(port);
             util = WebProxyUtil.getInstance();
         } catch (SocketException e) {
             e.printStackTrace();
@@ -44,5 +46,11 @@ public class WebProxyServer implements Runnable {
         server.close();
     }
 
+    public int getPort() {
+        return port;
+    }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
 }
