@@ -83,11 +83,12 @@ public class WebProxyUtil {
         }
         // Matcher mapper
         else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {
-            msg = getFile(content);
+            msg = getFilesInDirectory(content);
+
 
             // Matcher filer
         } else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$")) {
-            msg = getFilesInDirectory(content);
+            msg = getFile(content);
 
         } else {
             // TODO Strengen er crap
