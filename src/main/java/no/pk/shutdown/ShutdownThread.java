@@ -1,14 +1,14 @@
 package no.pk.shutdown;
 
 public class ShutdownThread extends Thread{
-    private IShutdownThread mShutdownThreadParent;
+    private IShutdownThread ShutdownThread;
 
-    public ShutdownThread(IShutdownThread mShutdownThreadParent) {
-        this.mShutdownThreadParent = mShutdownThreadParent;
+    public ShutdownThread(IShutdownThread ShutdownThread) {
+        this.ShutdownThread = ShutdownThread;
     }
 
     @Override
     public void run() {
-        this.mShutdownThreadParent.shutdown();
+        this.ShutdownThread.shutdown();
     }
 }

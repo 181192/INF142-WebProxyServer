@@ -1,6 +1,7 @@
 package no.pk.webproxyserver;
 
 import no.pk.shutdown.IShutdownThread;
+import no.pk.shutdown.ShutdownThread;
 
 import java.net.*;
 
@@ -8,10 +9,15 @@ public class WebProxyServer implements Runnable, IShutdownThread {
     private DatagramSocket server;
     private WebProxyUtil util;
     private int port;
+    private String address;
     private static volatile boolean keepRunning = true;
 
     public WebProxyServer(String address, int port) {
         this.port = port;
+        this.address = address;
+        ShutdownThread shutdownThread = new ShutdownThread(this);
+        Runtime.getRuntime().addShutdownHook(shutdownThread);
+
         try {
             server = new DatagramSocket(null);
             InetSocketAddress sa = new InetSocketAddress(address, port);
@@ -45,18 +51,13 @@ public class WebProxyServer implements Runnable, IShutdownThread {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public String getAddress() {
+        return address;
     }
 
     @Override
     public void shutdown() {
         keepRunning = false;
-        try {
-            server.bind(null);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
         server.close();
     }
 }

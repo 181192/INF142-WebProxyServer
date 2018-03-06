@@ -18,8 +18,8 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
         this.port = port;
         socket = new DatagramSocket();
         this.address = InetAddress.getByName(address);
-        ShutdownThread fShutdownThread = new ShutdownThread(this);
-        Runtime.getRuntime().addShutdownHook(fShutdownThread);
+        ShutdownThread shutdownThread = new ShutdownThread(this);
+        Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
 
     @Override
     public void shutdown() {
-        System.out.println("shutting down socket...");
+        System.out.println("Shutting down socket...");
         keepRunning = false;
 
         socket.close();
