@@ -99,38 +99,30 @@ public class WebProxyUtil {
     }
 
     private byte[] getFilesInDirectory(String path) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectOutputStream os;
+        StringBuilder sb = new StringBuilder();
+
         try {
-            List<File> files = Files.walk(Paths.get(path))
+            Files.walk(Paths.get(path))
                     .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .collect(Collectors.toList());
-
-            os = new ObjectOutputStream(outputStream);
-            os.writeObject(files);
-
+                    .forEach(file -> sb.append(file.toString()).append(", \n"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return outputStream.toByteArray();
+        return sb.toString().getBytes();
     }
 
     private byte[] getFile(String path) {
-        Path file = Paths.get(path);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectOutputStream os;
+        StringBuilder sb = new StringBuilder();
 
         try {
-            os = new ObjectOutputStream(outputStream);
-            BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
-            os.writeObject(attr);
+            Files.walk(Paths.get(path))
+                    .filter(Files::isDirectory)
+                    .forEach(file -> sb.append(file.toString()).append(", \n"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return outputStream.toByteArray();
+        return sb.toString().getBytes();
     }
 }
