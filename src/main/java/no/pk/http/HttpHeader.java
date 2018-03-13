@@ -37,10 +37,10 @@ public class HttpHeader {
 
     @Override
     public String toString() {
-
-        status.toString();
+        StringBuffer ss = new StringBuffer();
+        ss.append(status.toString());
         headers.forEach((k, v) -> {
-            System.out.println(k + " " + v);
+            ss.append(k + " " + v);
         });
         return null;
     }

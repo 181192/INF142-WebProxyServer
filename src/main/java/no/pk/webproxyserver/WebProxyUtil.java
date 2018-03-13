@@ -89,14 +89,17 @@ public class WebProxyUtil {
     }
 
 
-    private byte[] makeUrlConnection(String content) {
-
-        String hostname = "google.com";
+    private byte[] makeUrlConnection(String content) throws IOException {
+        byte[] melding = null;
+        String[] arr = content.split("//", 2);
+        String hostname = arr[1];
         String path = "/";
         String query = "";
 
+        Socket client = null;
 
-        Socket client = createSocket(hostname);
+        client = createSocket(hostname);
+
 
         printHTTPMessage(client, hostname, path, query);
 
@@ -109,6 +112,7 @@ public class WebProxyUtil {
 
         System.out.println(httpHeader.toString());
         System.out.println(" ");
+
 
         if (httpHeader.getStatus().getStatusCode().matches("302") || httpHeader.getStatus().getStatusCode().matches("301")) {
             String location = httpHeader.getHeaders().get("Location");
@@ -136,25 +140,24 @@ public class WebProxyUtil {
             System.out.println(" ");
         }
 
+        melding = httpHeader.toString().getBytes();
+
         br.close();
 
 
-
-
-        byte[] melding = null;
         try {
             HttpURLConnection httpConnection;
 
             httpConnection = (HttpURLConnection) new URL(content).openConnection();
             httpConnection.setRequestMethod("GET");
 
-            if(httpConnection.getHeaderFields() != null){
+            if (httpConnection.getHeaderFields() != null) {
                 for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
-                    if(field != null)
+                    if (field != null)
                         System.out.println(field.getValue());
                 }
                 melding = (httpConnection.getResponseMessage() + " " + httpConnection.getResponseCode()).getBytes();
-            }else {
+            } else {
                 melding = "Not Valid Domain Name".getBytes();
             }
 
@@ -162,14 +165,17 @@ public class WebProxyUtil {
             e.printStackTrace();
         }
         return melding;
-
     }
 
     byte[] validateInput(String content) {
-        byte[] msg;
+        byte[] msg = new byte[1024];
 
         if (UrlValidator.getInstance().isValid(content)) {
-            msg = makeUrlConnection(content);
+            try {
+                msg = makeUrlConnection(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         // Matcher mapper
         else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$")) {

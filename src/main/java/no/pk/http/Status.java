@@ -5,10 +5,11 @@ public class Status {
     private String statusCode;
     private String phrase;
 
-    public Status(){
-        this("","","");
+    public Status() {
+        this("", "", "");
     }
-    public Status(String br){
+
+    public Status(String br) {
         String[] arr = br.split(" ");
         version = arr[0];
         statusCode = arr[1];
@@ -47,7 +48,6 @@ public class Status {
 
     @Override
     public String toString() {
-        System.out.println(version +" "+ statusCode +" " +phrase);
-        return  null;
+        return version + " " + statusCode + " " + phrase;
     }
 }
