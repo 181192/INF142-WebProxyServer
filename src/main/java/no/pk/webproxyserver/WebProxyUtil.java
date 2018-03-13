@@ -30,14 +30,14 @@ public class WebProxyUtil {
         return instance;
     }
 
-    private void printHTTPMessage(Socket client, String hostname, String path, String query) {
+    private void printHTTPMessage(Socket client, String hostname, String path) {
         PrintWriter pw = null;
         try {
             pw = new PrintWriter(client.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pw.println("GET " + path + query + " HTTP/1.1");
+        pw.println("GET /" + path + " HTTP/1.1");
         pw.println("Host: " + hostname);
         pw.println("Connection: close");
         pw.println("");
@@ -90,21 +90,22 @@ public class WebProxyUtil {
 
 
     private byte[] makeUrlConnection(String content) throws IOException {
-        byte[] melding = null;
-        String[] arr = content.split("//", 2);
-        String hostname = arr[1];
-        String path = "/";
-        String query = "";
+        byte[] melding;
 
-        Socket client = null;
+        String hostname = "";
+        String path = "";
+        if (content.matches("http(s|):\\/\\/.+\\.\\w+\\w.*")) {
+            String[] arr = content.split("//", 2)[1].split("/", 2);
+            hostname = arr[0];
+            if (arr.length > 1)
+                path = arr[1];
+        }
 
-        client = createSocket(hostname);
+        Socket client = createSocket(hostname);
 
-
-        printHTTPMessage(client, hostname, path, query);
+        printHTTPMessage(client, hostname, path);
 
         BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        String t;
 
         Status st = new Status(br.readLine());
         HttpHeader httpHeader = new HttpHeader(st);
@@ -120,50 +121,21 @@ public class WebProxyUtil {
             Pattern pt = Pattern.compile("(http(s|):\\/\\/.+\\/)");
             Matcher matcher = pt.matcher(location);
             if (matcher.find()) {
-                path = "/";
-                query = location.substring(matcher.group(1).length(), location.length());
-                System.out.println(path);
-                System.out.println(query);
-//                path = matcher.group(1);
+                path = location.substring(matcher.group(1).length(), location.length());
             }
             client = createSocket(hostname);
-            printHTTPMessage(client, hostname, path, query);
+            printHTTPMessage(client, hostname, path);
 
             br = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
 
             st = new Status(br.readLine());
             httpHeader = new HttpHeader(st);
             setupHeaders(httpHeader, br);
-
-            System.out.println(httpHeader.toString());
-            System.out.println(" ");
         }
 
         melding = httpHeader.toString().getBytes();
 
         br.close();
-
-
-        try {
-            HttpURLConnection httpConnection;
-
-            httpConnection = (HttpURLConnection) new URL(content).openConnection();
-            httpConnection.setRequestMethod("GET");
-
-            if (httpConnection.getHeaderFields() != null) {
-                for (Map.Entry<String, List<String>> field : httpConnection.getHeaderFields().entrySet()) {
-                    if (field != null)
-                        System.out.println(field.getValue());
-                }
-                melding = (httpConnection.getResponseMessage() + " " + httpConnection.getResponseCode()).getBytes();
-            } else {
-                melding = "Not Valid Domain Name".getBytes();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return melding;
     }
 

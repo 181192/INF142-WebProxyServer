@@ -38,10 +38,10 @@ public class HttpHeader {
     @Override
     public String toString() {
         StringBuffer ss = new StringBuffer();
-        ss.append(status.toString());
+        ss.append(status.toString() + "\r\n");
         headers.forEach((k, v) -> {
-            ss.append(k + " " + v);
+            ss.append(k + " " + v + "\r\n");
         });
-        return null;
+        return ss.toString();
     }
 }
