@@ -1,5 +1,8 @@
 package no.pk.http;
 
+/**
+ * Klasse for å representere en http status kode
+ */
 public class Status {
     private String version;
     private String statusCode;

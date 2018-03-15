@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>KalliOgPeder</groupId>
-    <artifactId>WPS</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>WebProxyServer</artifactId>
+    <version>1.1.0</version>
 
 
     <developers>
@@ -67,7 +67,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.pk.klient.Main</mainClass>
+                                    <mainClass>no.pk.webproxyserver.Main</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

@@ -2,6 +2,9 @@ package no.pk.http;
 
 import java.util.HashMap;
 
+/**
+ * Klasse for å representere http headere
+ */
 public class HttpHeader {
     private Status status;
     private HashMap<String, String> headers;

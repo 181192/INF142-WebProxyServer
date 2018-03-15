@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
 
+/**
+ * Klienten DatagramCommunicator5000
+ */
 public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
 
     private DatagramSocket socket;
@@ -22,6 +25,10 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
         Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
 
+    /**
+     * Thread som kjoerer hele tiden. Den tar imot input fra brukeren, sender det til WPS,
+     * og mottar resultatet og printer det ut til brukeren.
+     */
     @Override
     public void run() {
         while (keepRunning) {
@@ -35,6 +42,11 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
 
     }
 
+    /**
+     * Henter en UDP melding fra WPS
+     *
+     * @return
+     */
     public String getMsg() {
         byte[] tmp = new byte[1024];
         DatagramPacket packet = new DatagramPacket(tmp, tmp.length);
@@ -46,6 +58,11 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
         return new String(packet.getData(), 0, packet.getLength());
     }
 
+    /**
+     * Sender en UDP melding til WPS
+     *
+     * @param msg
+     */
     public void sendMsg(String msg) {
         byte[] tmp = msg.getBytes();
         DatagramPacket packet = new DatagramPacket(tmp, tmp.length, address, port);
@@ -57,6 +74,9 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
     }
 
 
+    /**
+     * Shutdown kode for ctrl + c
+     */
     @Override
     public void shutdown() {
         System.out.println("Shutting down socket...");
