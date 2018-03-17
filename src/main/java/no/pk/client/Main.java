@@ -1,4 +1,4 @@
-package no.pk.klient;
+package no.pk.client;
 
 
 import java.net.SocketException;

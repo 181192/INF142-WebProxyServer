@@ -2,12 +2,19 @@ package no.pk.webproxyserver;
 
 import no.pk.shutdown.IShutdownThread;
 import no.pk.shutdown.ShutdownThread;
+import no.pk.util.FileUtil;
+import no.pk.util.TCPUtil;
+import no.pk.util.UDPUtil;
+import org.apache.commons.validator.routines.UrlValidator;
 
+import java.io.IOException;
 import java.net.*;
 
 public class WebProxyServer implements Runnable, IShutdownThread {
     private DatagramSocket server;
-    private WebProxyUtil util;
+    private TCPUtil tcp;
+    private UDPUtil udp;
+    private FileUtil files;
     private int port;
     private String address;
     private static volatile boolean keepRunning = true;
@@ -22,7 +29,9 @@ public class WebProxyServer implements Runnable, IShutdownThread {
             server = new DatagramSocket(null);
             InetSocketAddress sa = new InetSocketAddress(address, port);
             server.bind(sa);
-            util = WebProxyUtil.getInstance();
+            tcp = TCPUtil.getInstance();
+            udp = UDPUtil.getInstance();
+            files = FileUtil.getInstance();
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -36,7 +45,7 @@ public class WebProxyServer implements Runnable, IShutdownThread {
     public void run() {
         while (keepRunning) {
 
-            DatagramPacket packet = util.receivePacket(server);
+            DatagramPacket packet = udp.receivePacket(server);
 
             InetAddress address = packet.getAddress();
             int port = packet.getPort();
@@ -44,21 +53,40 @@ public class WebProxyServer implements Runnable, IShutdownThread {
             System.out.println("Got packet from " + address + " at port " + port + "!");
 
             String content = new String(packet.getData(), 0, packet.getLength());
-
-            byte[] msg = util.validateInput(content);
-
-            packet = new DatagramPacket(msg, msg.length, address, port);
-
-            util.sendPacket(server, packet);
+            
+            udp.sendMsg(validateInput(content), server, address, port);
         }
     }
 
-    public int getPort() {
-        return port;
-    }
+    /**
+     * Validator for input fra client. Validerer om det er en URL eller en filsti lokalt på WPS.
+     * Og deretter lager en melding basert på input
+     *
+     * @param content Input fra brukeren
+     * @return En melding basert paa hvordan informasjon en fikk fra brukeren
+     */
+    private byte[] validateInput(String content) {
+        byte[] msg = new byte[1024];
 
-    public String getAddress() {
-        return address;
+        // Validerer om det er en gyldig URL
+        if (UrlValidator.getInstance().isValid(content))
+            try {
+                msg = tcp.makeUrlConnection(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        // Matcher mapper
+        else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$"))
+            msg = files.getFilesInDirectory(content);
+
+            // Matcher filer
+        else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*$"))
+            msg = files.getFile(content);
+
+        else
+            msg = "Ups, did you forget http(s) for URL or '/' for filepath".getBytes();
+
+        return msg;
     }
 
     /**
@@ -69,5 +97,17 @@ public class WebProxyServer implements Runnable, IShutdownThread {
         System.out.println("\n\nServer shutting down!!");
         keepRunning = false;
         server.close();
+    }
+
+    public DatagramSocket getServer() {
+        return server;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getAddress() {
+        return address;
     }
 }

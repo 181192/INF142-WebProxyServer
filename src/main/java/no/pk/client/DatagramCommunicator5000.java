@@ -1,10 +1,13 @@
-package no.pk.klient;
+package no.pk.client;
 
 import no.pk.shutdown.IShutdownThread;
 import no.pk.shutdown.ShutdownThread;
+import no.pk.util.UDPUtil;
 
-import java.io.IOException;
-import java.net.*;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
@@ -13,14 +16,16 @@ import java.util.Scanner;
 public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
 
     private DatagramSocket socket;
+    private UDPUtil udp;
     private InetAddress address;
     private int port;
     private static volatile boolean keepRunning = true;
 
     public DatagramCommunicator5000(String address, int port) throws SocketException, UnknownHostException {
         this.port = port;
-        socket = new DatagramSocket();
         this.address = InetAddress.getByName(address);
+        socket = new DatagramSocket();
+        udp = UDPUtil.getInstance();
         ShutdownThread shutdownThread = new ShutdownThread(this);
         Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
@@ -34,45 +39,13 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
         while (keepRunning) {
             Scanner sc = new Scanner(System.in);
             System.out.println("waiting for input from user...");
-            String msg = sc.nextLine();
-            sendMsg(msg);
-            String receive = getMsg();
+            byte[] msg = sc.nextLine().getBytes();
+            udp.sendMsg(msg, socket, address, port);
+            String receive = udp.getMsg(socket);
             System.out.println(receive);
         }
 
     }
-
-    /**
-     * Henter en UDP melding fra WPS
-     *
-     * @return
-     */
-    public String getMsg() {
-        byte[] tmp = new byte[1024];
-        DatagramPacket packet = new DatagramPacket(tmp, tmp.length);
-        try {
-            socket.receive(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new String(packet.getData(), 0, packet.getLength());
-    }
-
-    /**
-     * Sender en UDP melding til WPS
-     *
-     * @param msg
-     */
-    public void sendMsg(String msg) {
-        byte[] tmp = msg.getBytes();
-        DatagramPacket packet = new DatagramPacket(tmp, tmp.length, address, port);
-        try {
-            socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     /**
      * Shutdown kode for ctrl + c
@@ -83,5 +56,17 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
         keepRunning = false;
 
         socket.close();
+    }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
+    public InetAddress getAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
     }
 }
