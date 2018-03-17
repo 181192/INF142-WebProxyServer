@@ -11,17 +11,13 @@ public class Headers {
     private Status status;
     private HashMap<String, String> headers;
 
-    public Headers(Status st){
+    public Headers(Status st) {
         status = st;
         headers = new HashMap<>();
     }
 
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public HashMap<String, String> getHeaders() {

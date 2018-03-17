@@ -29,24 +29,12 @@ public class Status {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public String getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public String getPhrase() {
         return phrase;
-    }
-
-    public void setPhrase(String phrase) {
-        this.phrase = phrase;
     }
 
     @Override

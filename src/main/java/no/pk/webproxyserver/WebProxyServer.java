@@ -53,7 +53,7 @@ public class WebProxyServer implements Runnable, IShutdownThread {
             System.out.println("Got packet from " + address + " at port " + port + "!");
 
             String content = new String(packet.getData(), 0, packet.getLength());
-            
+
             udp.sendMsg(validateInput(content), server, address, port);
         }
     }
@@ -75,7 +75,7 @@ public class WebProxyServer implements Runnable, IShutdownThread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        // Matcher mapper
+            // Matcher mapper
         else if (content.matches("^(([\\\\/])[a-zA-ZæøåÆØÅ0-9\\s_@\\-.^!#$%&+={}\\[\\]]+)*([\\\\/])$"))
             msg = files.getFilesInDirectory(content);
 
