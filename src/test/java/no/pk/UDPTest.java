@@ -3,24 +3,25 @@ package no.pk;
 import no.pk.client.DatagramCommunicator5000;
 import no.pk.util.UDPUtil;
 import no.pk.webproxyserver.WebProxyServer;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 class UDPTest {
     private DatagramCommunicator5000 client;
     private UDPUtil udp;
 
-    @BeforeEach
+    @BeforeAll
     void setup() throws SocketException, UnknownHostException {
-        int port = 0;
+        int port = 4546;
         String address = "192.168.8.11";
 
-        Thread r1 = new Thread(new WebProxyServer(address, port));
+        WebProxyServer r1 = new WebProxyServer(address, port);
         r1.start();
         client = new DatagramCommunicator5000(address, port);
         udp = UDPUtil.getInstance();
