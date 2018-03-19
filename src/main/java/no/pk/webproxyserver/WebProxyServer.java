@@ -9,9 +9,12 @@ import org.apache.commons.validator.routines.UrlValidator;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class WebProxyServer implements Runnable, IShutdownThread {
+public class WebProxyServer implements IShutdownThread {
     private DatagramSocket server;
+    private ExecutorService pool;
     private TCPUtil tcp;
     private UDPUtil udp;
     private FileUtil files;
@@ -35,14 +38,20 @@ public class WebProxyServer implements Runnable, IShutdownThread {
         } catch (SocketException e) {
             e.printStackTrace();
         }
+
+        /*
+            Bruker ett thread pool for aa sende hver forespoersel inn i en "traad koe".
+            Slik at det er 10 traader som kjoerer hele tiden, men kommer det flere enn 10 forespoersler paa engang vil
+            de automatisk bli satt i koe.
+        */
+        this.pool = Executors.newFixedThreadPool(10);
     }
 
     /**
-     * Thread som kjører heletiden. Den tar i mot forespoersler via UDP,
+     * Metode som kjører heletiden. Den tar i mot forespoersler via UDP,
      * og sender informasjon tilbake til brukeren basert paa hva input var.
      */
-    @Override
-    public void run() {
+    public void start() {
         while (keepRunning) {
 
             DatagramPacket packet = udp.receivePacket(server);
@@ -51,10 +60,9 @@ public class WebProxyServer implements Runnable, IShutdownThread {
             int port = packet.getPort();
 
             System.out.println("Got packet from " + address + " at port " + port + "!");
-
             String content = new String(packet.getData(), 0, packet.getLength());
 
-            udp.sendMsg(validateInput(content), server, address, port);
+            pool.execute(() -> udp.sendMsg(validateInput(content), server, address, port));
         }
     }
 
@@ -96,7 +104,9 @@ public class WebProxyServer implements Runnable, IShutdownThread {
     public void shutdown() {
         System.out.println("\n\nServer shutting down!!");
         keepRunning = false;
+        pool.shutdown();
         server.close();
+
     }
 
     public DatagramSocket getServer() {

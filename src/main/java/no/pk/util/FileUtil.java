@@ -26,8 +26,8 @@ public class FileUtil {
 
         try {
             Files.walk(Paths.get(path))
-                    .filter(Files::isRegularFile)
-                    .forEach(file -> sb.append(file.toString()).append(", \n"));
+                    .filter(Files::isRegularFile) // Bruker java 8 syntax til å sjekke om hver fil i mappen er en ordentlig fil
+                    .forEach(file -> sb.append(file.toString()).append(", \n")); // Liten lambda for å legge til hver fil i strengen
         } catch (IOException e) {
             e.printStackTrace();
         }

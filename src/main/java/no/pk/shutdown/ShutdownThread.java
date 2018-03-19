@@ -1,5 +1,8 @@
 package no.pk.shutdown;
 
+/**
+ * Shutdown thread for å overlaste "ctrl + c" knappen.
+ */
 public class ShutdownThread extends Thread{
     private IShutdownThread ShutdownThread;
 

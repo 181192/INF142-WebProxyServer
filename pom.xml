@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>KalliOgPeder</groupId>
-    <artifactId>WebProxyServer</artifactId>
-    <version>1.1.0</version>
+    <artifactId>Spam</artifactId>
+    <version>1.5.1</version>
 
 
     <developers>
@@ -67,7 +67,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.pk.webproxyserver.Main</mainClass>
+                                    <mainClass>no.pk.spam.Main</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

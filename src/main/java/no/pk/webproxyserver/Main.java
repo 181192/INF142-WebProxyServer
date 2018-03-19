@@ -1,5 +1,6 @@
 package no.pk.webproxyserver;
 
+
 public class Main {
     public static void main(String[] args) {
         String adresse = (args[0] != null) ? args[0] : "127.0.0.1";
@@ -12,7 +13,6 @@ public class Main {
 
         WebProxyServer server = new WebProxyServer(adresse, port);
         System.out.println("Server starts at " + server.getAddress() + ":" + server.getPort() + "...");
-        Thread t1 = new Thread(server);
-        t1.start();
+        server.start();
     }
 }

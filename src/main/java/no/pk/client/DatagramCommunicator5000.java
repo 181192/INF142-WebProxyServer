@@ -44,7 +44,6 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
             String receive = udp.getMsg(socket);
             System.out.println(receive);
         }
-
     }
 
     /**
@@ -52,9 +51,8 @@ public class DatagramCommunicator5000 implements Runnable, IShutdownThread {
      */
     @Override
     public void shutdown() {
-        System.out.println("Shutting down socket...");
+        System.out.println("\n\nShutting down client...");
         keepRunning = false;
-
         socket.close();
     }
 
