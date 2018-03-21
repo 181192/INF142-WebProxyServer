@@ -35,7 +35,7 @@ Filene vi henter ut fra serveren henter vi ut med lambda uttrykk.
 
 ### Ønsker du å prøve?
 
-Vi legger ved to JAR filer som du kan teste ut applikasjonen.
+Gå til [releases](https://github.com/181192/INF142-WebProxyServer/releases) og last ned jar filene.
 
 For å kjøre klienten skriver du:
 `java -jar DatagramCommunicator5000-1.6.3-jar-with-dependencies.jar <ip> <port>`
@@ -44,4 +44,4 @@ Og for serveren skriver du:
 `java -jar WebProxyServer-1.6.3-jar-with-dependencies.jar <ip> <port>`
 
 Og skulle du ønske å bruke spammeren skriver du:
-`java -jar Spammer5000-1.6.3-jar-with-dependencies.jar <ip> <port>`
+`java -jar Spammer5000-1.6.3-jar-with-dependencies.jar <ip> <port> <url>`
