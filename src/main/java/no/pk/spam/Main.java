@@ -13,8 +13,12 @@ public class Main {
             port = 4545;
         }
 
-        Client client = new Client(adresse, port);
+        String url = (args.length > 1) ? args[2] : "https://hvl.no";
+        System.out.println("Spammer5000 connect to " + adresse + ":" + port + ", url: " + url);
+
+        Spammer5000 client = new Spammer5000(adresse, port, url);
         Thread t1 = new Thread(client);
         t1.start();
+
     }
 }

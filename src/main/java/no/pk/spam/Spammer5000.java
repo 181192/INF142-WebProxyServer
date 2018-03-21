@@ -10,19 +10,21 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- * Klienten Client
+ * "spam" client for testing purpose Spammer5000
  */
-public class Client implements Runnable, IShutdownThread {
+public class Spammer5000 implements Runnable, IShutdownThread {
 
     private static volatile boolean keepRunning = true;
     private DatagramSocket socket;
     private UDPUtil udp;
     private InetAddress address;
     private int port;
+    private String url;
 
-    Client(String address, int port) throws SocketException, UnknownHostException {
+    Spammer5000(String address, int port, String url) throws SocketException, UnknownHostException {
         this.port = port;
         this.address = InetAddress.getByName(address);
+        this.url = url;
         socket = new DatagramSocket();
         udp = UDPUtil.getInstance();
         ShutdownThread shutdownThread = new ShutdownThread(this);
@@ -32,7 +34,7 @@ public class Client implements Runnable, IShutdownThread {
     @Override
     public void run() {
         while (keepRunning) {
-            byte[] msg = "https://hvl.no".getBytes();
+            byte[] msg = url.getBytes();
             udp.sendMsg(msg, socket, address, port);
         }
     }
